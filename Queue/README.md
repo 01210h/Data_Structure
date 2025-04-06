@@ -132,6 +132,7 @@ public:
     void moving(int n);
     void remove();
     void G();
+    ~list();
 };
 int main(){
     int test,people;
@@ -145,6 +146,9 @@ int main(){
     return 0;
 }
 list::list(int P):result(0),round(0),BOOM(nullptr),N(0),inha(0),capacity(P),front(nullptr),rear(nullptr){}
+list::~list(){
+    delete [] game;
+}
 bool list::empty(){return N==0;}
 void list::insert(){//초기 환경 구축
     for(int i=capacity;i>0;i--){//사람 수만큼 반복
