@@ -1,6 +1,7 @@
 <h2>Basic Stack code (with. singly linked list)</h2>
 
-```css
+```cpp
+
 #include<iostream>
 #include<string>
 using namespace std;
@@ -113,10 +114,11 @@ void list::pop_all(){
     head= nullptr;
     tail= nullptr;
 }
+```
 
 <h2>Parenthesis Check Stack code 괄호검사 (with. singly linked list)</h2>
 
-```css
+```cpp
 #include<iostream>
 #include<string>
 using namespace std;
@@ -202,3 +204,4 @@ void list::pop(){
     delete erase_node;
     N--;
 }
+```
