@@ -46,6 +46,8 @@ int main(){
                 arr.empty();
             }else if(str=="pop_all"){
                 arr.pop_all();
+            }else if(str=="top"){
+                arr.top();
             }
         }
     }
@@ -66,17 +68,17 @@ void list::top(){
         cout<<"-1\n";
         return;
     }
-    cout<<tail->data<<"\n";
+    cout<<tail->data<<"\n";//테일 데이터 접근
 }
 void list::push(int x){
-    Node* new_node=new Node(x);
+    Node* new_node=new Node(x);//새로운 노드 생성. 동적할당
     if(EMPTY()){
-        head=tail=new_node;
-        N++;
+        head=tail=new_node;//처음에 비어있으면 헤드와 테일 모두 새로운 노드 가리킴
+        N++;//갯수 늘리기
         return;
     }
-    tail->next=new_node;
-    tail=new_node;
+    new_node->next=head;
+    head=new_node;
     N++;
 }
 void list::pop(){
@@ -84,18 +86,8 @@ void list::pop(){
         cout<<"-1\n";
         return;
     }
-    Node* view=head;
-    /*
-    while(view->next->next!= nullptr){
-        view=view->next;//삭제 전 노드
-    }*/
-    for(int i=0;i<N-2;i++){//h 2 3 4 t
-        view=view->next;
-    }
-    Node* erase_node=tail;
-    view->next= nullptr;
-    tail=view;
-    cout<<erase_node->data<<"\n";
+    Node* erase_node=head;
+    head=head->next;
     delete erase_node;
     N--;
 }
@@ -106,21 +98,15 @@ void list::pop_all(){
         cout<<"-1\n";
         return;
     }
-    for(int i=0;i<n;i++){
-        if(EMPTY()){
-            cout<<"-1\n";
-            return;
-        }
-        Node* view=head;
-        for(int i=0;i<N-2;i++){//h 2 3 4 t
-            view=view->next;
-        }
-        Node* erase_node=tail;
-        view->next= nullptr;
-        tail=view;
+    Node* view=head;
+    while(view!= nullptr){
+        Node* erase_node=view;
         sum+=erase_node->data;
         delete erase_node;
+        view=view->next;
         N--;
     }
     cout<<sum<<"\n";
+    head= nullptr;
+    tail= nullptr;
 }
