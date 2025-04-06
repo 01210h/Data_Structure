@@ -1,4 +1,5 @@
 <h2>Basic Queue based singly linked list</h2>
+<h4>First in First out (like 맛집 줄서기) : 먼저 줄 선 순서대로 먼저 나감</h4>
 
 ```cpp
 #include<iostream>
