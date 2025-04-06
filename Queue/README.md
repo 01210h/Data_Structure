@@ -97,7 +97,8 @@ void list::dequeue(){
 }
 ```
 <h2>Circular Queue Game 원형큐 게임 (with. singly linked list)</h2>
-<h3>내가 헤맸던 부분 : 탈락 이후 폭탄을 탈락자 옆 좌석 사람에게 넘겨줘야한다는 걸 까먹음</h3>
+<h4>내가 헤맸던 부분 : 탈락 이후 폭탄을 탈락자 옆 좌석 사람에게 넘겨줘야한다는 걸 까먹음</h3>
+
 ```cpp
 #include<iostream>
 using namespace std;
