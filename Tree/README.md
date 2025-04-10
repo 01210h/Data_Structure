@@ -1,5 +1,4 @@
 <h2>Basic Tree</h2>
-<br>
 <hr>
 
 ```cpp
