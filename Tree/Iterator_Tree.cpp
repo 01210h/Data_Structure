@@ -1,75 +1,150 @@
 #include<iostream>
 #include<list>
+#include<string>
 using namespace std;
 
+class Tree;
 class Node{
 private:
-    int data;//int 를 저장하는 트리
-    Node* parent;//부모 정해주기. 너 엄마 누긔야!!
-    list<Node*> children;//자식 노드 리스트(노트 포인터 타입)
-    friend class Tree;//Tree클래스에서 노드 접근할 수 있도록 friend 처리
+    int data;
+    list<Node*> childList;
+    Node* parent;
+    friend class Tree;
 public:
-    Node(int data,Node* parent):data(data),parent(parent){}//생성자 함수 값 넣기
+    Node(int data,Node* parent):data(data),parent(parent){};
 };
-
 class Tree{
 private:
-    Node* root_node;//트리 당 루트 노드 하나.
-    list<Node*>node_list;//모든 노드의 주소를 저장하는 리스트
+    Node* root;
+    list<Node*> allList;
 public:
-    Tree(int value);//생성자 함수
-    int size();//트리 사이즈 리턴
-    Node* root();//루트 노드의 주소 리턴
-    list<Node*>::iterator find(list<Node*>& L, int value);//반복자
-    //다른 위치로 이동할 수 있는 "위치 객체"->
+    Tree(int num);
+    list<Node*>::iterator find(int v,list<Node*>& node);
+    void Insert(int x,int v);
+    void Delete(int v);
+    void Parent(int v);
+    void Children(int v);
+    void Ancestors(int v);
 
-    void insert(Node* pos, int value);//삽입
-    void erase(Node* pos);//제거
-
+    bool empty(list<Node*>& node);
 };
-Tree::Tree(int value):root_node(new Node(value,nullptr)){
-    node_list.push_back(root_node);//루트 생성 및 전체 리스트에 삽입
+Tree::Tree(int num):root(new Node(num, nullptr)){
+    allList.push_back(root);
 }
-int Tree::size(){
-    return static_cast<int>(node_list.size());//리스트 기능
-}
-Node* Tree::root(){
-    return root_node;//루트 노드 주소 반환
-}
-list<Node*>::iterator Tree::find(list<Node*>& L, int value){//반복자
-    list<Node*>::iterator it=L.begin();//리스트의 첫 번째 원소 가리킴
-    while(it!=L.end()){//끝까지 반복
-        if((*it)->data==value){//*it-> 역참조 -> 리스트 속 값 참조.(node*객체)의 data 값이 같으면
-            break;//while문 탈출
+list<Node*>::iterator Tree::find(int val,list<Node*>& node){
+    list<Node*>::iterator it=node.begin(); //탐색하려는 노드의 시작점 지정
+    while(it!=node.end()){
+        if((*it)->data==val){
+            break;
         }
-        it++;//it 이동 (다음으로)
+        it++;
     }
-    return it;//it 찾는 노드 위치를 가리키는 반복자 반환
+    return it;
 }
-
-void Tree::insert(Node* pos, int value){
-    if(pos== nullptr){
-        return;
-    }
-    Node* new_node=new Node(value,pos);//새로운 노드 할당
-    pos->children.push_back(new_node);//자식노드에 집어넣음.
-    node_list.push_back(new_node);//모든 노드 저장하는 곳에 삽입
+bool Tree::empty(list<Node*>& node){
+    return node.size()==0;
 }
-void Tree::erase(Node* pos){
-    if(pos== nullptr){//찾을 수 없는 노드면 리턴
+void Tree::Insert(int x,int v){
+    if(v<1||v>10001||x<1||x>10001){//유효값인지 판단
+        cout<<"-1\n";
         return;
     }
-    if(pos==root_node){//지우려는 노드가 루트면 리턴
-        cout<<"TryToRemoveRoot\n";
+    list<Node*>::iterator key1=find(x,allList);//부모
+    list<Node*>::iterator key2=find(v,allList);//자식
+    if(key1==allList.end()||key2!=allList.end()){
+        cout<<"-1\n";
         return;
     }
-    Node* parent_node=pos->parent;//지우려는 노드의 부모노드 주소저장
-    parent_node->children.erase(find(parent_node->children,pos->data));//부모노드의 자식 중 지우려는 노드의 값을 가진 노드 찾아 지우기
-    node_list.erase(find(node_list,pos->data));//전체 노드에서도 지우기
-
-    for(Node* child:pos->children){//자식 노드들을 하나씩 꺼내서 child ptr로 접근
-        parent_node->children.push_back(child);//부모 노드의 자식 노드에 삽입
-        child->parent=parent_node;//부모 변경
+    Node* par=*(key1);
+    Node* new_node=new Node(v,par);
+    par->childList.push_back(new_node);
+    allList.push_back(new_node);
+}
+void Tree::Delete(int v){
+    list<Node*>::iterator key1=find(v,allList);
+    if(key1==allList.end()||*(key1)==root){
+        cout<<"-1\n";
+        return;
     }
-    delete pos;
+    Node* del=*(key1);//삭제하려는 노드
+    Node* par=del->parent;
+    par->childList.erase(find(v,par->childList));
+    for(Node* view:del->childList){
+        par->childList.push_back(view);
+        view->parent=par;
+    }
+    allList.erase(key1);
+    delete del;
+}
+void Tree::Parent(int v){
+    list<Node*>::iterator key1=find(v,allList);
+    if(key1==allList.end()){
+        cout<<"-1\n";
+        return;
+    }
+    Node* view=*(key1);
+    if(view==root){
+        cout<<"0\n";
+        return;
+    }
+    cout<<view->parent->data<<"\n";
+}
+void Tree::Children(int v){
+    list<Node*>::iterator key1=find(v,allList);
+    if(key1==allList.end()){
+        cout<<"-1\n";
+        return;
+    }
+    Node* view=*(key1);
+    if(empty(view->childList)){
+        cout<<"0\n";
+        return;
+    }
+    for(Node* cursor:view->childList){
+        cout<<cursor->data<<" ";
+    }
+    cout<<"\n";
+}
+void Tree::Ancestors(int v){
+    list<Node*>::iterator key1=find(v,allList);
+    if(key1==allList.end()){
+        cout<<"-1\n";
+        return;
+    }
+    Node* view=*(key1);
+    if(view==root){
+        cout<<"0\n";
+        return;
+    }
+    int N{0};
+    while(view!=root){
+        N++;
+        view=view->parent;
+    }
+    cout<<N<<"\n";
+}
+int main(){
+    int test,n1,n2;
+    string str;
+    cin>>test;
+    Tree tree(1);
+    for(int i=0;i<test;i++){
+        cin>>str;
+        if(str=="Insert"){
+            cin>>n1>>n2;
+            tree.Insert(n1,n2);
+        }else if(str=="Parent"){
+            cin>>n1;
+            tree.Parent(n1);
+        }else if(str=="Children"){
+            cin>>n1;
+            tree.Children(n1);
+        }else if(str=="Ancestors"){
+            cin>>n1;
+            tree.Ancestors(n1);
+        }else if(str=="Delete"){
+            cin>>n1;
+            tree.Delete(n1);
+        }
+    }
 }
